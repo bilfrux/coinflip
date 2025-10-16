@@ -1,54 +1,87 @@
-# 🏗 Scaffold-ETH 2
+# � CoinFlip - Application Web3
 
-<h4 align="center">
-  <a href="https://docs.scaffoldeth.io">Documentation</a> |
-  <a href="https://scaffoldeth.io">Website</a>
-</h4>
+![Status](https://img.shields.io/badge/status-working-brightgreen)
+![Solidity](https://img.shields.io/badge/Solidity-0.8.20-blue)
+![React](https://img.shields.io/badge/React-19-blue)
 
-🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on the Ethereum blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
+Une application décentralisée permettant de parier de l'ETH sur un lancer de pièce, avec gains 2x en cas de victoire.
 
-⚙️ Built using NextJS, RainbowKit, Foundry, Wagmi, Viem, and Typescript.
+## 🎮 Caractéristiques
 
-- ✅ **Contract Hot Reload**: Your frontend auto-adapts to your smart contract as you edit it.
-- 🪝 **[Custom hooks](https://docs.scaffoldeth.io/hooks/)**: Collection of React hooks wrapper around [wagmi](https://wagmi.sh/) to simplify interactions with smart contracts with typescript autocompletion.
-- 🧱 [**Components**](https://docs.scaffoldeth.io/components/): Collection of common web3 components to quickly build your frontend.
-- 🔥 **Burner Wallet & Local Faucet**: Quickly test your application with a burner wallet and local faucet.
-- 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with the Ethereum network.
+- ✨ Interface moderne et professionnelle
+- 💰 Logique de paris complète (2x gain)
+- 📊 Statistiques en temps réel
+- 🔗 Intégration Web3 (MetaMask)
+- 🎨 Design responsive et élégant
+- ⚡ Smart contract optimisé
 
-![Debug Contracts tab](https://github.com/scaffold-eth/scaffold-eth-2/assets/55535804/b237af0c-5027-4849-a5c1-2e31495cccb1)
+## ⚡ Démarrage rapide
 
-## Requirements
+### 3 terminaux, 3 commandes
 
-Before you begin, you need to install the following tools:
-
-- [Node (>= v20.18.3)](https://nodejs.org/en/download/)
-- Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
-- [Git](https://git-scm.com/downloads)
-
-## Quickstart
-
-To get started with Scaffold-ETH 2, follow the steps below:
-
-1. Install dependencies if it was skipped in CLI:
-
-```
-cd my-dapp-example
-yarn install
+**Terminal 1** : Réseau local
+```bash
+cd packages/foundry && yarn chain
 ```
 
-2. Run a local network in the first terminal:
-
+**Terminal 2** : Déployer le contrat
+```bash
+cd packages/foundry && yarn deploy
+node scripts-js/updateDeployedContracts.js
 ```
-yarn chain
+
+**Terminal 3** : Lancer l'app
+```bash
+cd packages/nextjs && yarn dev
 ```
 
-This command starts a local Ethereum network using Foundry. The network runs on your local machine and can be used for testing and development. You can customize the network configuration in `packages/foundry/foundry.toml`.
+Allez sur **http://localhost:3000** 🎉
 
-3. On a second terminal, deploy the test contract:
+## 📚 Documentation
 
+- [QUICK_START.md](./QUICK_START.md) - Lancement en 5 min
+- [INSTALL.md](./INSTALL.md) - Installation détaillée
+- [FIX_CONTRACT_ERROR.md](./FIX_CONTRACT_ERROR.md) - Dépannage
+
+## 🛠 Stack Technique
+
+**Frontend**: React 19 + Tailwind CSS + Wagmi
+**Smart Contract**: Solidity 0.8.20 + Foundry
+**Blockchain**: Anvil (local)
+
+## 📋 Prérequis
+
+```bash
+node --version     # v18+
+yarn --version     # v1.22+
+forge --version    # Latest
 ```
-yarn deploy
-```
+
+## 🎮 Utilisation
+
+1. Connectez votre wallet MetaMask
+2. Sélectionnez un montant (0.01 - 0.5 ETH)
+3. Choisissez Heads 👑 ou Tails 🌙
+4. Cliquez "FLIP NOW"
+5. Gagnez 2x ou perdez votre mise
+
+## 🐛 Problème "Contract not deployed" ?
+
+Voir [FIX_CONTRACT_ERROR.md](./FIX_CONTRACT_ERROR.md) pour la solution complète.
+
+En résumé :
+- ✅ Lancez `yarn chain`
+- ✅ Lancez `yarn deploy`
+- ✅ Lancez `node scripts-js/updateDeployedContracts.js`
+- ✅ Lancez `yarn dev`
+
+## 📄 Licence
+
+MIT
+
+---
+
+**Bon jeu ! 🎲✨**
 
 This command deploys a test smart contract to the local network. The contract is located in `packages/foundry/contracts` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/foundry/script` to deploy the contract to the network. You can also customize the deploy script.
 

@@ -19,6 +19,8 @@ const Home: NextPage = () => {
   } | null>(null);
   const [totalBets, setTotalBets] = useState<number>(0);
   const [wins, setWins] = useState<number>(0);
+  const [lastBetAmount, setLastBetAmount] = useState<string>("0");
+  const [waitingForResult, setWaitingForResult] = useState(false);
 
   // Utilise l'abstraction du projet pour gérer l'écriture vers le contrat
   const scaffoldWrite = useScaffoldWriteContract({ contractName: "CoinFlip" });
@@ -27,7 +29,7 @@ const Home: NextPage = () => {
   const { data: deployedData } = useDeployedContractInfo({ contractName: "CoinFlip" });
 
   // wagmi read pour récupérer le résultat en chaîne
-  const { data: onchainResult } = useContractRead({
+  const { data: onchainResult, refetch: refetchResult } = useContractRead({
     address: deployedData?.address,
     abi: deployedData?.abi,
     functionName: "getResult",
@@ -35,11 +37,24 @@ const Home: NextPage = () => {
   }) as any;
 
   useEffect(() => {
-    if (onchainResult && onchainResult[1]) {
+    if (waitingForResult && onchainResult && onchainResult[1]) {
+      // Transaction confirmée, on peut afficher le résultat
+      const won = onchainResult[0];
       setFlipping(false);
-      setResult(onchainResult[0] ? "Heads" : "Tails");
+      setResult(won ? "Heads" : "Tails");
+      setWaitingForResult(false);
+
+      const payout = won ? (parseFloat(lastBetAmount) * 2).toFixed(4) : "0";
+      setGameResult({
+        won: won,
+        payout: payout,
+      });
+
+      if (won) {
+        setWins(wins + 1);
+      }
     }
-  }, [onchainResult]);
+  }, [onchainResult, waitingForResult, lastBetAmount, wins]);
 
   const handleFlip = async () => {
     if (!betAmount || parseFloat(betAmount) <= 0) {
@@ -54,8 +69,7 @@ const Home: NextPage = () => {
 
     setResult(null);
     setGameResult(null);
-    setFlipping(true);
-    setTotalBets(totalBets + 1);
+    setLastBetAmount(betAmount);
 
     try {
       // Envoie la transaction via l'abstraction du projet
@@ -69,25 +83,18 @@ const Home: NextPage = () => {
 
       console.log("Transaction sent:", txResult);
 
-      // Simulate a realistic result display (2 second delay for animation)
-      // The contract determines the actual result, this is just for UI animation
+      // Transaction signée et envoyée, on commence l'animation
+      setFlipping(true);
+      setTotalBets(totalBets + 1);
+      setWaitingForResult(true);
+
+      // Refetch le résultat après un délai (donne du temps au bloc)
       setTimeout(() => {
-        const simulatedWin = Math.random() > 0.5;
-        const payout = simulatedWin ? (parseFloat(betAmount) * 2).toFixed(4) : "0";
-
-        setGameResult({
-          won: simulatedWin,
-          payout: payout,
-        });
-
-        if (simulatedWin) {
-          setWins(wins + 1);
-        }
-
-        setFlipping(false);
-      }, 2000);
+        refetchResult?.();
+      }, 3000);
     } catch (error: any) {
       setFlipping(false);
+      setWaitingForResult(false);
       console.error("Flip failed:", error);
 
       // Show error details

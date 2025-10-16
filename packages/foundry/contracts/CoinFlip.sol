@@ -12,9 +12,11 @@ contract CoinFlip {
     }
 
     mapping(uint256 => BetInfo) public bets;
+    mapping(address => uint256) public lastBetId;
     uint256 public requestCounter = 0;
     uint256 private nonce = 0;
     address public owner;
+    uint256 public totalEarnings = 0;
 
     event CoinFlipped(
         address indexed player,
@@ -24,6 +26,7 @@ contract CoinFlip {
     );
     event CoinFlipResult(
         address indexed player,
+        uint256 requestId,
         bool result,
         bool won,
         uint256 payout
@@ -58,6 +61,17 @@ contract CoinFlip {
 
         bool coinResult = (randomWords % 2) == 0; // true = heads, false = tails
         bool won = playerChoice == coinResult;
+        uint256 payout = 0;
+
+        // If player wins, send them 2x their bet
+        if (won) {
+            payout = msg.value * 2;
+            (bool success, ) = msg.sender.call{value: payout}("");
+            require(success, "Payout transfer failed");
+        } else {
+            // If player loses, keep the bet (goes to contract)
+            totalEarnings += msg.value;
+        }
 
         bets[requestId] = BetInfo({
             player: msg.sender,
@@ -68,12 +82,10 @@ contract CoinFlip {
             won: won
         });
 
-        // The contract simply stores the bet and the result
-        // For a demo, we don't transfer funds (would require liquidity management)
-        // In production, you'd manage a treasury or use a funding mechanism
+        lastBetId[msg.sender] = requestId;
         
         emit CoinFlipped(msg.sender, requestId, msg.value, playerChoice);
-        emit CoinFlipResult(msg.sender, coinResult, won, won ? msg.value * 2 : 0);
+        emit CoinFlipResult(msg.sender, requestId, coinResult, won, payout);
     }
 
     function getBetInfo(uint256 requestId)
@@ -87,16 +99,17 @@ contract CoinFlip {
     function getResult(address player)
         external
         view
-        returns (
-            bool,
-            bool,
-            bool,
-            uint256
-        )
+        returns (bool result, bool hasWon, bool hasResult, uint256 payout)
     {
-        // Return the latest bet info for a player
-        // For now, returning a simplified version
-        return (false, false, false, 0);
+        uint256 betId = lastBetId[player];
+        BetInfo memory bet = bets[betId];
+        
+        uint256 payoutAmount = 0;
+        if (bet.won) {
+            payoutAmount = bet.betAmount * 2;
+        }
+        
+        return (bet.result, bet.won, bet.hasResult, payoutAmount);
     }
 
     function withdraw() external {

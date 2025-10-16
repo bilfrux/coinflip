@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { NextPage } from "next";
 import { useAccount, useContractRead } from "wagmi";
+import { Coin3D } from "~~/components/Coin3D";
 import { Address } from "~~/components/scaffold-eth";
 import { useDeployedContractInfo, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
@@ -146,20 +147,8 @@ const Home: NextPage = () => {
           {/* Center Panel - Game */}
           <div className="flex flex-col items-center justify-center">
             {/* Coin Animation */}
-            <div className="mb-8 perspective">
-              <div
-                className="relative w-40 h-40 rounded-full bg-gradient-to-br from-yellow-300 to-yellow-600 shadow-2xl flex items-center justify-center text-6xl border-4 border-yellow-200 cursor-pointer transition-all duration-300 hover:shadow-yellow-500/50"
-                style={{
-                  transform: flipping ? "rotateY(1440deg) rotateX(360deg)" : "rotateY(0deg) rotateX(0deg)",
-                  transition: flipping
-                    ? "transform 2s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
-                    : "transform 0.3s ease-out",
-                }}
-              >
-                <div style={{ transform: "rotateY(0deg)" }}>
-                  {!flipping && result === "Heads" ? "👑" : !flipping && result === "Tails" ? "🌙" : "🪙"}
-                </div>
-              </div>
+            <div className="mb-8">
+              <Coin3D isFlipping={flipping} result={result as "Heads" | "Tails" | null} />
             </div>
 
             {/* Result Display */}

@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     YourContract: {
-      address: "0xe1aa25618fa0c7a1cfdab5d6b456af611873b629",
+      address: "0x0c8e79f3534b00d9a3d4a856b665bf4ebc22f2ba",
       abi: [
         {
           type: "constructor",
@@ -148,10 +148,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 33,
+      deployedOnBlock: 92,
     },
     CoinFlip: {
-      address: "0xe1da8919f262ee86f9be05059c9280142cf23f48",
+      address: "0xed1db453c3156ff3155a97ad217b3087d5dc5f6e",
       abi: [
         {
           type: "constructor",
@@ -288,20 +288,39 @@ const deployedContracts = {
           ],
           outputs: [
             {
-              name: "",
+              name: "result",
               type: "bool",
               internalType: "bool",
             },
             {
-              name: "",
+              name: "hasWon",
               type: "bool",
               internalType: "bool",
             },
             {
-              name: "",
+              name: "hasResult",
               type: "bool",
               internalType: "bool",
             },
+            {
+              name: "payout",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "lastBetId",
+          inputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
             {
               name: "",
               type: "uint256",
@@ -338,6 +357,19 @@ const deployedContracts = {
         },
         {
           type: "function",
+          name: "totalEarnings",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
           name: "withdraw",
           inputs: [],
           outputs: [],
@@ -352,6 +384,12 @@ const deployedContracts = {
               type: "address",
               indexed: true,
               internalType: "address",
+            },
+            {
+              name: "requestId",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
             },
             {
               name: "result",
@@ -407,7 +445,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 34,
+      deployedOnBlock: 93,
     },
   },
 } as const;

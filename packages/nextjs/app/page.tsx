@@ -37,6 +37,16 @@ const Home: NextPage = () => {
   }) as any;
 
   useEffect(() => {
+    if (waitingForResult) {
+      // Poll toutes les 1 seconde si on attend le résultat
+      const interval = setInterval(() => {
+        refetchResult?.();
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [waitingForResult, refetchResult]);
+
+  useEffect(() => {
     if (waitingForResult && onchainResult && onchainResult[1]) {
       // Transaction confirmée, on peut afficher le résultat
       const won = onchainResult[0];
@@ -87,11 +97,7 @@ const Home: NextPage = () => {
       setFlipping(true);
       setTotalBets(totalBets + 1);
       setWaitingForResult(true);
-
-      // Refetch le résultat après un délai (donne du temps au bloc)
-      setTimeout(() => {
-        refetchResult?.();
-      }, 3000);
+      // Le polling dans le useEffect va automatiquement refetch le résultat
     } catch (error: any) {
       setFlipping(false);
       setWaitingForResult(false);
